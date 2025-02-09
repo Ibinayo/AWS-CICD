@@ -31,18 +31,23 @@ jobs:
         with:
           java-version: 1.8
 
-      - name: Debug - Check if build.sh Exists
-        run: ls -l $GITHUB_WORKSPACE/.github/scripts/
+      - name: Debug - Verify Project Structure
+        run: |
+          echo "Checking workspace structure..."
+          ls -l $GITHUB_WORKSPACE
+          echo "Checking application folder contents..."
+          ls -l $GITHUB_WORKSPACE/${{ env.applicationfolder }}
 
       - name: Ensure build.sh is Executable
         run: chmod +x $GITHUB_WORKSPACE/.github/scripts/build.sh
 
-      - name: Convert Line Endings (Fix CRLF Issues)
-        run: sudo apt-get install dos2unix && dos2unix $GITHUB_WORKSPACE/.github/scripts/build.sh
-
       - name: Build and Package Maven
         id: package
+        working-directory: ${{ env.applicationfolder }}  # Make sure it runs inside your project folder
         run: $GITHUB_WORKSPACE/.github/scripts/build.sh
+
+      - name: Verify Build Output
+        run: ls -l $GITHUB_WORKSPACE/${{ env.applicationfolder }}/target
 
       - name: Upload Artifact to S3
         working-directory: ${{ env.applicationfolder }}/target
@@ -69,7 +74,7 @@ jobs:
       - name: Deploy to AWS CodeDeploy
         run: |
           echo "Deploying branch ${{ github.ref }} to ${{ github.event.inputs.environment }}"
-          commit_hash=git rev-parse HEAD
+          commit_hash=`git rev-parse HEAD`
           aws deploy create-deployment \
             --application-name CodeDeployAppNameWithASG \
             --deployment-group-name CodeDeployGroupName \
