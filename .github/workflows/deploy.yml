@@ -6,7 +6,7 @@ on:
 env:
   applicationfolder: spring-boot-hello-world-example
   AWS_REGION: us-east-1
-  S3BUCKET: codedeploystack-webappdeploymentbucket-wighjmrtxlyo
+  S3BUCKET: codedeploystack-webappdeploymentbucket-rv32pf4p6le3
 
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::539247461447:role/CodeDeployRoleforGitHub
+          role-to-assume: arn:aws:iam::851725449366:role/CodeDeployRoleforGitHub
           role-session-name: GitHub-Action-Role
           aws-region: us-east-1
 
